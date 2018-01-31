@@ -1,69 +1,8 @@
 #ifndef EVOLUTION_H
 #define EVOLUTION_H
 
-#include <vector>
+#include "information.h"
 
-
-/* -------------------------------------------------------------------------- *
- * Information theory                                                         *
- * -------------------------------------------------------------------------- */
-
-class Buffer : public std::vector<char> {
-
- public:
-
-  /* Helper constructors */
-  Buffer();
-  Buffer(const char *c_str);
-  Buffer(const char *c_str, unsigned size);
-  Buffer(unsigned num, char c);
-
-  /* Bitwise arithmetic operations */
-  Buffer &operator^= (const Buffer &obj);
-  const Buffer operator^ (const Buffer &obj) const;
-  const Buffer operator~() const;
-
-  /* Get the value of the `i`th bit */
-  u_int8_t getBit(unsigned index);
-
-  /* Flip the `i`th bit */
-  void flipBit(unsigned index);
-};
-
-
-/**
- * @brief Calculate the Hamming weight of a byte string, interpreting `buffer`
- *  as a string of bytes.
- *
- * @param buffer
- *
- * @return Hamming weight (number of ones)
- */
-unsigned hammingWeight(const Buffer &buffer);
-
-/**
- * @brief Calculate the Shannon entropy of a byte string
- *
- * @param buffer
- *
- * @return Shannon entropy
- */
-double shannonEntropy(const Buffer &buffer);
-
-/**
- * @brief Calculate the distance between two byte strings, defined as the
- *  metric `d(a, b) = H(a - b)`, where `H(x)` is the Hamming weight.  The
- *  strings must be the same size.
- *
- * @note This function throws an exception when byte strings are unequally
- *  sized.
- *
- * @param a first byte string
-\ * @param b second byte string
- *
- * @return distance
- */
-unsigned distance(const Buffer &a, const Buffer &b);
 
 
 /* -------------------------------------------------------------------------- *
@@ -77,9 +16,7 @@ unsigned distance(const Buffer &a, const Buffer &b);
  *  need additional parameters for a new function implementation, you should
  *  subclass this class.
  */
-class Parameters {
-
- public:
+typedef struct {
 
   unsigned sizePopulation;  //! Maximum number of agents in the population
   unsigned sizeChromosome;  //! Number of bytes in each agent's chromosome
@@ -94,7 +31,8 @@ class Parameters {
   double lambdaScoreFeed;   //! Parameter used for `feed` operations
   double lambdaEntropyFeed; //! Parameter used for `feed` operations
   double muEnergyStarve;    //! Mean energy required to survive a `starve`
-};
+
+} Parameters;
 
 
 /**
@@ -126,18 +64,16 @@ class Agent {
    */
   Agent(const Buffer &chromosome, double energy = 0);
 
+  /* Copy constructor */
+  Agent(const Agent &agent);
+
   /* Array-like access to the chromosome bytes */
   char &operator[](unsigned index);
   const char &operator[](unsigned index) const;
 
-  /* Genetic operators */
-  friend unsigned mutate(Agent &agent, const Parameters &params);
-  friend Agent crossover(const Agent &father, const Agent &mother,
-                         const Parameters &params);
-  friend int predation(const Agent &first, const Agent &second,
-                       const Parameters &params);
-  friend void feed(Agent &predator, Agent &prey, const Parameters &params);
-  friend int starve(const Agent &agent, const Parameters &params);
+  /* Getter for the chromosome */
+  Buffer &getChromosome(void);
+  const Buffer &getChromosomeConst(void) const;
 };
 
 
@@ -172,6 +108,11 @@ unsigned mutate(Agent &agent, const Parameters &params);
 Agent crossover(const Agent &father, const Agent &mother,
                 const Parameters &params);
 
+typedef enum {
+  PREDATION_BOTH_SURVIVE,
+  PREDATION_FIRST_SURVIVES,
+  PREDATION_SECOND_SURVIVES
+} PredationOutcome;
 
 /**
  * @brief Performs a `predation` operation between two individuals.  There are
@@ -232,11 +173,17 @@ Agent crossover(const Agent &father, const Agent &mother,
  *
  * @return reference to the winning chromosome
  */
-int predation(const Agent &a, const Agent &b, const Parameters &params);
+PredationOutcome predation(const Agent &a, const Agent &b,
+                           const Parameters &params);
 
-void feed(Agent &predator, Agent &prey, const Parmeters &params);
+void feed(Agent &predator, Agent &prey, const Parameters &params);
 
 int starve(const Agent &agent, const Parameters &params);
 
+unsigned hammingWeight(const Agent &a);
+
+double shannonEntropy(const Agent &a);
+
+unsigned distance(const Agent &a, const Agent &b);
 
 #endif /* end of include guard: EVOLUTION_H */

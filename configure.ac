@@ -1,7 +1,9 @@
 AC_INIT([genetics], 1.0)
-AM_INIT_AUTOMAKE()
+AC_CONFIG_MACRO_DIR([m4])
+AM_INIT_AUTOMAKE([foreign])
 AC_PROG_RANLIB
 AC_PROG_CXX
+AX_CXX_COMPILE_STDCXX_11
 
 dnl For unit tests
 PKG_CHECK_MODULES([gtest], [gtest]) 
