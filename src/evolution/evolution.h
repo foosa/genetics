@@ -2,37 +2,12 @@
 #define EVOLUTION_H
 
 #include "information.h"
-
+#include "parameters.h"
 
 
 /* -------------------------------------------------------------------------- *
  * Genetics                                                                   *
  * -------------------------------------------------------------------------- */
-
-
-/**
- * @brief A simple class to store the model parameters.  Many of the models
- *  functions accept a reference to a `Parameters` object.  If you find you
- *  need additional parameters for a new function implementation, you should
- *  subclass this class.
- */
-typedef struct {
-
-  unsigned sizePopulation;  //! Maximum number of agents in the population
-  unsigned sizeChromosome;  //! Number of bytes in each agent's chromosome
-
-  /* Selection parameters */
-  double muNumMutations;    //! Mean number of mutations per `mutate`
-  double muNumCrossovers;   //! Mean number of crossovers per `crossover`
-  double lambdaEnergy;      //! Energy given to every child at birth.
-  double sigmaPredation;    //! Standard deviation of the normal dist. used
-  //  for `predation` operations
-  double lambdaPredation;   //! Parameter used for `predation` operations
-  double lambdaScoreFeed;   //! Parameter used for `feed` operations
-  double lambdaEntropyFeed; //! Parameter used for `feed` operations
-  double muEnergyStarve;    //! Mean energy required to survive a `starve`
-
-} Parameters;
 
 
 /**
@@ -74,6 +49,10 @@ class Agent {
   /* Getter for the chromosome */
   Buffer &getChromosome(void);
   const Buffer &getChromosomeConst(void) const;
+
+  /* Getter and setter for the energy */
+  double getEnergy(void) const;
+  void setEnergy(double energy);
 };
 
 
@@ -176,14 +155,53 @@ typedef enum {
 PredationOutcome predation(const Agent &a, const Agent &b,
                            const Parameters &params);
 
+/**
+ * @brief Feed the `prey` to the `predator`, increasing the energy of the
+ *  predator
+ *
+ * @param predator
+ * @param prey
+ * @param params
+ */
 void feed(Agent &predator, Agent &prey, const Parameters &params);
 
-int starve(const Agent &agent, const Parameters &params);
+/**
+ * @brief Starve the `agent` to apply a selection pressure related to feeding.
+ *  There are two possible return values ...
+ *
+ *    Result    Interpretation
+ *
+ *    0     The agent survives, but their energy is decreased
+ *    1     The agent dies to starvation
+ *
+ *  The selection algorithm is fairly simple.  Let `e` be the energy of the
+ *  agent, and `p` be a random number sampled from a Poisson distribution with
+ *  mean `muEnergyStarve`.  If `p >= e` then the agent dies to starvation;
+ *  otherwise the agent survives but their energy is redued by `p`.
+ *
+ * @param agent
+ * @param params
+ *
+ * @return outcome
+ */
+int starve(Agent &agent, const Parameters &params);
 
-unsigned hammingWeight(const Agent &a);
-
-double shannonEntropy(const Agent &a);
-
-unsigned distance(const Agent &a, const Agent &b);
+/**
+ * @brief Attempts to mate two individuals, applying a selection pressure
+ *  related to courtship and mating.  There are two possible
+ *  outcomes ...
+ *
+ *    Result    Interpretation
+ *
+ *    0     The courtship is unsuccessful and neither individual mates
+ *    1     The courtship is successful and the individuals mate
+ *
+ * @param a
+ * @param b
+ * @param params
+ *
+ * @return
+ */
+int mate(const Agent &a, const Agent &b, const Parameters &params);
 
 #endif /* end of include guard: EVOLUTION_H */

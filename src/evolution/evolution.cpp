@@ -1,5 +1,4 @@
 #include <cmath>
-// #include <cstring>
 #include <cassert>
 #include <time.h>
 #include <algorithm>
@@ -36,6 +35,14 @@ Buffer &Agent::getChromosome(void) {
 
 const Buffer &Agent::getChromosomeConst(void) const {
   return m_chromosome;
+}
+
+double Agent::getEnergy(void) const {
+  return m_energy;
+}
+
+void Agent::setEnergy(double energy) {
+  m_energy = energy;
 }
 
 char &Agent::operator[](unsigned index) {
@@ -199,25 +206,66 @@ PredationOutcome predation(const Agent &first, const Agent &second,
 }
 
 void feed(Agent &predator, Agent &prey, const Parameters &params) {
-  // TODO: Do this
+  const Buffer &c = prey.getChromosomeConst();
+  double entropy = shannonEntropy(c);
+  double energy = predator.getEnergy();
+
+  energy += params.lambdaScoreFeed * entropy + 1.0;
+  predator.setEnergy(energy);
 }
 
-int starve(const Agent &agent, const Parameters &params) {
-  // TODO: Do this
+int starve(Agent &agent, const Parameters &params) {
+  /* Draw a random number */
+  const gsl_rng_type *T = gsl_rng_default;
+  gsl_rng *rng = gsl_rng_alloc(T);
+  gsl_rng_set(rng, time(NULL));
+
+  unsigned p = gsl_ran_poisson(rng, params.muEnergyStarve);
+  gsl_rng_free(rng);
+
+  /* Check outcome */
+  double e = agent.getEnergy();
+  if (p < e) {
+    agent.setEnergy(e - p);
+    return 0;
+  }
+
+  else {
+    agent.setEnergy(0);
+    return 1;
+  }
 }
 
-unsigned hammingWeight(const Agent &agent) {
-  return hammingWeight(agent.getChromosomeConst());
+int mate(const Agent &a, const Agent &b, const Parameters &params) {
+  const Buffer &ca = a.getChromosomeConst();
+  const Buffer &cb = b.getChromosomeConst();
+
+  /* Hamming distance divided by chromosome size */
+  double d = distance(ca, cb);
+  d = d / ca.size();
+
+  /* Choose a random Beta-distributed number.  We are using a beta-distribution
+   * where the mode is pinned to be exactly zero, e.g.
+   *
+   *    0 = (alpha - 1) / (alpha + beta - 2)
+   *
+   * so alpha = 1.  The mean is mu = 1 / (1 + beta)
+   */
+  double mu = params.muMating;
+  double beta = (1.0 / mu) - 1.0;
+
+  const gsl_rng_type *T = gsl_rng_default;
+  gsl_rng *rng = gsl_rng_alloc(T);
+  gsl_rng_set(rng, time(NULL));
+  double p = gsl_ran_beta(rng, 1, beta);
+  gsl_rng_free(rng);
+
+  if (d < p) {
+    return 1;
+  }
+
+  else {
+    return 0;
+  }
 }
-
-double shannonEntropy(const Agent &agent) {
-  return shannonEntropy(agent.getChromosomeConst());
-}
-
-unsigned distance(const Agent &a, const Agent &b) {
-  return distance(a.getChromosomeConst(),
-                  b.getChromosomeConst());
-}
-
-
 

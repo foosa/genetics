@@ -11,7 +11,9 @@ TEST(genetics, mutate) {
   params.muNumMutations = 2.5;
 
   unsigned numMutations = mutate(a, params);
-  EXPECT_LE(distance(a, b), numMutations);
+  const Buffer &ca = a.getChromosomeConst();
+  const Buffer &cb = b.getChromosomeConst();
+  EXPECT_LE(distance(ca, cb), numMutations);
 }
 
 TEST(genetics, crossover) {
