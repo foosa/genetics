@@ -16,9 +16,16 @@
 class Agent {
  private:
   Buffer m_chromosome;  //! Chromosome
-  unsigned m_size;      //! Size (in number of bytes) of the chromosome
-  double m_energy;      //! Energy of the agent.  Used for the `feed` and
-  //  `starve` operations
+  double m_energy;      //! Energy of the agent
+
+  friend class boost::serialization::access;
+
+  /* Serialization */
+  template <typename Archive>
+  void serialize(Archive &ar, const unsigned int version) {
+    ar &m_chromosome;
+    ar &m_energy;
+  }
 
  public:
 
@@ -54,6 +61,9 @@ class Agent {
   double getEnergy(void) const;
   void setEnergy(double energy);
 };
+
+
+BOOST_CLASS_VERSION(Agent, 0)
 
 
 /**

@@ -2,6 +2,9 @@
 #define INFORMATION_H
 
 #include <vector>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/serialization/vector.hpp>
 
 
 /* -------------------------------------------------------------------------- *
@@ -9,6 +12,15 @@
  * -------------------------------------------------------------------------- */
 
 class Buffer : public std::vector<char> {
+
+ private:
+  friend class boost::serialization::access;
+
+  /* Serialization */
+  template <typename Archive>
+  void serialize(Archive &ar, const unsigned int version) {
+    ar &boost::serialization::base_object<std::vector<char>> (*this);
+  }
 
  public:
 
@@ -29,6 +41,9 @@ class Buffer : public std::vector<char> {
   /* Flip the `i`th bit */
   void flipBit(unsigned index);
 };
+
+
+BOOST_CLASS_VERSION(Buffer, 0)
 
 
 /**

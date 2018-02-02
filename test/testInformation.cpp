@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <cmath>
+#include <fstream>
 #include "evolution.h"
 
 
@@ -92,3 +93,34 @@ TEST(information, bitFlip) {
 
   EXPECT_EQ(b, c);
 }
+
+TEST(information, serialization) {
+  Buffer a(20, 0x00);
+  a[0] = 0x01;
+  a[1] = 0x02;
+  a[2] = 0x03;
+
+  {
+    /* Scope */
+    std::ofstream ofs("buffer.bin");
+    boost::archive::binary_oarchive oa(ofs);
+
+    /* Serialize the buffer */
+    oa << a;
+  }
+
+  {
+    /* Restore the buffer */
+    std::ifstream ifs("buffer.bin");
+    boost::archive::binary_iarchive ia(ifs);
+
+    Buffer b;
+    ia >> b;
+
+    EXPECT_EQ(a.size(), b.size());
+    for (unsigned k = 0; k < a.size(); k++) {
+      EXPECT_EQ(a[k], b[k]);
+    }
+  }
+}
+
