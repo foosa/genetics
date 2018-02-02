@@ -13,6 +13,10 @@ AC_CHECK_LIB([m], [cos])
 AC_CHECK_LIB([gslcblas], [cblas_dgemm])
 AC_CHECK_LIB([gsl], [gsl_blas_dgemm])
 
+dnl Boost
+AX_BOOST_BASE
+AX_BOOST_SERIALIZATION
+AX_BOOST_PROGRAM_OPTIONS
 
 AC_CONFIG_FILES([
 	Makefile	 			\
