@@ -19,7 +19,7 @@ class Buffer : public std::vector<char> {
   /* Serialization */
   template <typename Archive>
   void serialize(Archive &ar, const unsigned int version) {
-    ar & boost::serialization::base_object<std::vector<char>> (*this);
+    ar &boost::serialization::base_object<std::vector<char>> (*this);
   }
 
  public:

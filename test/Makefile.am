@@ -12,8 +12,10 @@ testInformation_LDADD = $(gtest_LIBS) -L$(evolutionDir) \
 						-levolve
 
 testGenetics_SOURCES = testGenetics.cpp
-testGenetics_CXXFLAGS = $(gtest_CFLAGS) -I$(evolutionDir)
-testGenetics_LDADD = $(gtest_LIBS) -L$(evolutionDir) -levolve
-
+testGenetics_CXXFLAGS = $(gtest_CFLAGS) -I$(evolutionDir) \
+						$(NOOST_CPPFLAGS)
+testGenetics_LDADD = $(gtest_LIBS) -L$(evolutionDir) \
+					 $(BOOST_LDFLAGS) $(BOOST_SERIALIZATION_LIB) \
+					 -levolve
 subdirs = $(srcDir)
 TESTS = $(check_PROGRAMS)

@@ -13,19 +13,16 @@
 
 Agent::Agent(unsigned size, char c, double energy) {
   m_chromosome = Buffer(size, c);
-  m_size = size;
   m_energy = energy;
 }
 
 Agent::Agent(const Buffer &chromosome, double energy) {
   m_chromosome = chromosome;
-  m_size = m_chromosome.size();
   m_energy = energy;
 }
 
 Agent::Agent(const Agent &agent) {
   m_chromosome = agent.m_chromosome;
-  m_size = agent.m_size;
   m_energy = agent.m_energy;
 }
 

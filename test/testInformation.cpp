@@ -99,12 +99,12 @@ TEST(information, serialization) {
   a[0] = 0x01;
   a[1] = 0x02;
   a[2] = 0x03;
- 
+
   {
     /* Scope */
     std::ofstream ofs("buffer.bin");
     boost::archive::binary_oarchive oa(ofs);
-  
+
     /* Serialize the buffer */
     oa << a;
   }
