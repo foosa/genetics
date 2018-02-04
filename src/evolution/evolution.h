@@ -1,8 +1,6 @@
 #ifndef EVOLUTION_H
 #define EVOLUTION_H
 
-#include <list>
-#include <boost/serialization/list.hpp>
 #include "information.h"
 #include "parameters.h"
 
@@ -215,39 +213,5 @@ int starve(Agent &agent, const Parameters &params);
  * @return
  */
 int mate(const Agent &a, const Agent &b, const Parameters &params);
-
-
-/* -------------------------------------------------------------------------- *
- * Ecosystem                                                                  *
- * -------------------------------------------------------------------------- */
-
-class Ecosystem {
- private:
-
-  std::list<Agent> m_agents;
-  std::vector<Agent *> m_agentPtr;
-  Parameters m_parameters;
-
-  friend class boost::serialization::access;
-
-  /* Serialization */
-  template <typename Archive>
-  void serialize(Archive &ar, const unsigned int version) {
-    ar &m_parameters;
-    ar &m_agents;
-    ar &m_agentPtr;
-  }
-
- public:
-
-  Ecosystem(const Parameters &params);
-
-  void run(unsigned numIterations = 1000);
-
-  /* Simple statistics and diagnostics */
-  double meanEntropy(void);
-  double stdevEntropy(void);
-  double meanSurvivalFraction(void);
-};
 
 #endif /* end of include guard: EVOLUTION_H */

@@ -1,5 +1,7 @@
 bin_PROGRAMS = evolve
-evolve_SOURCES = evolution.cpp \
+evolve_SOURCES = ecosystem.cpp \
+				 ecosystem.h \
+				 evolution.cpp \
 				 evolution.h \
 				 information.cpp \
 				 information.h \
@@ -8,7 +10,9 @@ evolve_SOURCES = evolution.cpp \
 
 # Library just for testing
 noinst_LIBRARIES = libevolve.a
-libevolve_a_SOURCES = evolution.cpp \
+libevolve_a_SOURCES = ecosystem.cpp \
+					  ecosystem.h \
+					  evolution.cpp \
 					  evolution.h \
 					  information.cpp \
 					  information.h \
