@@ -2,6 +2,7 @@
 #define ECOSYSTEM_H
 
 #include <memory>
+#include <boost/serialization/unique_ptr.hpp>
 #include "agent.h"
 
 
@@ -31,6 +32,7 @@ class Ecosystem {
 
  public:
 
+  Ecosystem();
   Ecosystem(const Parameters &params);
 
   void run(unsigned numIterations = 1000);
@@ -41,5 +43,7 @@ class Ecosystem {
   double meanSurvivalFraction(void);
 };
 
+
+BOOST_CLASS_VERSION(Ecosystem, 0)
 
 #endif /* end of include guard: ECOSYSTEM_H */

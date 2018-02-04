@@ -136,6 +136,8 @@ unsigned threadMating(const Parameters &params, AgentVector &agents,
  * Ecosystem class                                                            *
  * -------------------------------------------------------------------------- */
 
+Ecosystem::Ecosystem() { }
+
 Ecosystem::Ecosystem(const Parameters &params) {
   m_parameters = params;
 
