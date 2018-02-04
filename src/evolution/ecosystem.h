@@ -1,9 +1,8 @@
 #ifndef ECOSYSTEM_H
 #define ECOSYSTEM_H
 
-// #include <mutex>
 #include <memory>
-#include "evolution.h"
+#include "agent.h"
 
 
 

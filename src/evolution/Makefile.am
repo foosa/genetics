@@ -1,8 +1,8 @@
 bin_PROGRAMS = evolve
-evolve_SOURCES = ecosystem.cpp \
+evolve_SOURCES = agent.cpp \
+				 agent.h \
+				 ecosystem.cpp \
 				 ecosystem.h \
-				 evolution.cpp \
-				 evolution.h \
 				 information.cpp \
 				 information.h \
 				 main.cpp \
@@ -10,10 +10,10 @@ evolve_SOURCES = ecosystem.cpp \
 
 # Library just for testing
 noinst_LIBRARIES = libevolve.a
-libevolve_a_SOURCES = ecosystem.cpp \
+libevolve_a_SOURCES = agent.cpp \
+					  agent.h \
+					  ecosystem.cpp \
 					  ecosystem.h \
-					  evolution.cpp \
-					  evolution.h \
 					  information.cpp \
 					  information.h \
 					  parameters.h

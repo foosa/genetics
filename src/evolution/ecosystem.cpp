@@ -54,7 +54,7 @@ unsigned removeDeadAgents(AgentVector &agents) {
 
   assert(bIt == fIt);
   assert((**fIt).getEnergy() <= 0);
-  
+
   /* Erase.  No memory leak since we are using unique_ptr */
   agents.erase(fIt, agents.end());
 
@@ -65,10 +65,10 @@ unsigned removeDeadAgents(AgentVector &agents) {
  * @brief Executed by a thread during the feeding round
  */
 unsigned threadFeeding(const Parameters &params, AgentVector &agents,
-                       const AgentVector::iterator &start, 
+                       const AgentVector::iterator &start,
                        const AgentVector::iterator &end) {
   unsigned numDead = 0;
-  
+
   /* Feeding round */
   AgentVector::iterator a;
   AgentVector::iterator b;
@@ -102,10 +102,10 @@ unsigned threadFeeding(const Parameters &params, AgentVector &agents,
 }
 
 /**
- * @brief Executed by a thread during the mating round 
+ * @brief Executed by a thread during the mating round
  */
 unsigned threadMating(const Parameters &params, AgentVector &agents,
-                      const AgentVector::iterator &start, 
+                      const AgentVector::iterator &start,
                       const AgentVector::iterator &end,
                       AgentVector &children) {
   unsigned numBorn = 0;
@@ -117,7 +117,7 @@ unsigned threadMating(const Parameters &params, AgentVector &agents,
   for (a = start; a < end; a += 2) {
     b = a + 1;
     if (mate(**a, **b, params)) {
-      Agent child = crossover(**a, **b, params); 
+      Agent child = crossover(**a, **b, params);
       child.setEnergy(params.lambdaEnergy);
       mutate(child, params);
 
@@ -149,7 +149,7 @@ Ecosystem::Ecosystem(const Parameters &params) {
 }
 
 void Ecosystem::runOnceSerial(void) {
-  
+
   /* Insert simple (algae) organisms until the population is full */
   for (unsigned n = m_agents.size(); n < m_parameters.sizePopulation; n++) {
     Agent *a = new Agent(m_parameters.sizeChromosome, 0x00,
@@ -163,17 +163,17 @@ void Ecosystem::runOnceSerial(void) {
   std::mt19937 g(rd());
   std::shuffle(m_agents.begin(), m_agents.end(), g);
 
-  int deltaPopulation = - threadFeeding(m_parameters, m_agents, 
-                                       m_agents.begin(), m_agents.end());
+  int deltaPopulation = - threadFeeding(m_parameters, m_agents,
+                                        m_agents.begin(), m_agents.end());
   removeDeadAgents(m_agents);
 
   /* Mating round */
   std::shuffle(m_agents.begin(), m_agents.end(), g);
   AgentVector children;
-  
+
   deltaPopulation = threadMating(m_parameters, m_agents,
                                  m_agents.begin(), m_agents.end(), children);
-  
+
   /* Can't use vector::insert since this uses a copy instead of move */
   for (unsigned i = 0; i < children.size(); i++) {
     m_agents.push_back(std::move(children[i]));
