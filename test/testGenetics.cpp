@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <iostream>
 #include <fstream>
-#include "evolution.h"
+#include "agent.h"
 
 
 TEST(genetics, mutate) {

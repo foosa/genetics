@@ -1,6 +1,8 @@
 #ifndef PARAMETERS_H
 #define PARAMETERS_H
 
+#include <boost/serialization/access.hpp>
+
 
 /**
  * @brief A simple class to store the model parameters.  Many of the models
@@ -9,6 +11,27 @@
  *  subclass this class.
  */
 typedef struct {
+
+ private:
+  friend class boost::serialization::access;
+
+  /* Serialization */
+  template <typename Archive>
+  void serialize(Archive &ar, const unsigned int version) {
+    ar &sizePopulation;
+    ar &sizeChromosome;
+    ar &muNumMutations;
+    ar &muNumCrossovers;
+    ar &lambdaEnergy;
+    ar &sigmaPredation;
+    ar &lambdaPredation;
+    ar &lambdaScoreFeed;
+    ar &lambdaEntropyFeed;
+    ar &muEnergyStarve;
+    ar &muMating;
+  }
+
+ public:
 
   unsigned sizePopulation;  //! Maximum number of agents in the population
   unsigned sizeChromosome;  //! Number of bytes in each agent's chromosome
