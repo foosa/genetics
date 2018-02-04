@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <cmath>
 #include <fstream>
-#include "evolution.h"
+#include "information.h"
 
 
 TEST(information, buffer) {
